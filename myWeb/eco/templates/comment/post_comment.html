@@ -1,0 +1,45 @@
+<!--{% extends "../base.html" %}-->
+<!--{% block title %}反馈{% endblock %}-->
+<!--{% block content %}-->
+<!--<div class="col-6 mx-auto">-->
+<!--            <form name="comment_form" class="comment-form"  method="POST">-->
+<!--            {% csrf_token %}-->
+<!--                <div class="form-group">-->
+<!--                    <label for="body">-->
+<!--                       <h1 class="mb-0 h2 pe-2 pb-4" >评论:</h1>-->
+<!--                    </label>-->
+<!--                    <textarea-->
+<!--                        type="text"-->
+<!--                        class="form-control"-->
+<!--                        id="body"-->
+<!--                        name="body"-->
+<!--                        rows="10"></textarea>-->
+<!--                </div>-->
+<!--                <br>-->
+<!--                <button type="submit" class="btn btn-primary custom-btn-primary">发布</button>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--{% endblock %}-->
+
+{% extends "../base.html" %}
+{% block title %}反馈{% endblock %}
+{% block content %}
+<div class="col-6 mx-auto">
+    <form name="comment_form" class="comment-form" method="POST" action="{% url 'comment:post_comment_anyone' product_id=product.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="body">
+                <h1 class="mb-0 h2 pe-2 pb-4">评论:</h1>
+            </label>
+            <textarea
+                type="text"
+                class="form-control"
+                id="body"
+                name="body"
+                rows="10"></textarea>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary custom-btn-primary">发布</button>
+    </form>
+</div>
+{% endblock %}

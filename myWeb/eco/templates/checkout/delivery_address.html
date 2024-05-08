@@ -1,0 +1,102 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block title %}Basket Summary{%endblock %}
+{% block content %}
+
+<!--&lt;!&ndash; 调试输出 &ndash;&gt;-->
+<!--<p>Debug: Number of addresses - {{ addresses|length }}</p>-->
+
+<!--{% for address in addresses %}-->
+<!--  <div class="card mb-3 border-1 rounded-0 product-item me-md-4" data-index="{{option.id}}">-->
+<!--    <div class="row g-0">-->
+<!--      <div class="col">-->
+<!--        <div class="card pb-3 rounded-0">-->
+<!--          <div class="card-header bg-white small text-muted">-->
+<!--            {% if address.default %}-->
+<!--              Debug: This is the default address-->
+<!--            {% endif %}-->
+<!--            &nbsp;-->
+<!--          </div>-->
+<!--          &lt;!&ndash; 其他模板代码... &ndash;&gt;-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--{% endfor %}-->
+
+
+<div class="container">
+  <div class="col-12">
+    <h1 class="h2">您的地址</h1>
+  </div>
+  <div class="col-12">
+    <p>请选择地址</p>
+  </div>
+  <hr />
+</div>
+
+
+<div class="container">
+  <div class="row g-3">
+    {% if addresses|length == 0 %}
+    <div class="col-12">没有地址, <a href="{% url 'account:add_address_tmp' %}">请点击添加</a></div>
+    {% else %}
+    <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
+
+<div class="d-flex bd-highlight ms-0">
+  <div class="p-2 flex-grow-1 bd-highlight">预期收益总计：</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">¥</span><span id="sub_total"class="fw-bold h5">{{basket.get_subtotal_price}}</span></div>
+</div>
+<div class="d-flex bd-highlight">
+  <div class="p-2 flex-grow-1 bd-highlight">小费：</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">¥</span><span id="delivery_price" class="fw-bold h5">{{basket.get_delivery_price}}</span></div>
+</div>
+<div class="d-flex bd-highlight">
+  <div class="p-2 flex-grow-1 bd-highlight">总收益：</div>
+  <div class="p-2 bd-highlight"><span class="fw-bold h5">¥</span><span id="total"class="fw-bold h5">{{basket.get_total_price}}</span></div>
+</div>
+{% comment %} <a role="button" href="{% url 'checkout:payment_selection' %}" class="btn btn-success fw-bold w-100" type="button">确认</a> {% endcomment %}
+<a role="button" href="{% url 'checkout:payment_complete' %}" class="btn btn-success fw-bold w-100" type="button">确认</a>
+</div>
+
+    <div class="col-md-7 col-lg-8">
+  {% for address in addresses %}
+    {% if not address.default %}
+      <h1 class="h5 pt-4">其他地址</h1>
+    {% endif %}
+    <div class="card mb-3 border-1 rounded-0 product-item me-md-4" data-index="{{option.id}}">
+      <div class="row g-0">
+        <div class="col">
+          <div class="card pb-3 rounded-0">
+            <div class="card-header bg-white small text-muted">
+              {% if address.default %}
+                默认地址
+              {% endif %}
+              &nbsp;
+            </div>
+            <div class="card-body small pb-1">
+              <p class="card-text m-0 fw-bold">{{address.full_name}}</p>
+              <p class="card-text m-0">{{address.school}}</p>
+              <p class="card-text m-0">{{address.address_line}}</p>
+              <p class="card-text m-0">{{address.address_line2}}</p>
+              <p class="card-text m-0">{{address.postcode}}</p>
+              <p class="card-text m-0">联系方式: {{address.phone}}</p>
+              <div class="pt-5">
+                <a href="{% url 'account:edit_address' address.id %}" class="text-decoration-none">修改</a>
+                {% if not address.default %}
+                  | <a href="{% url 'account:set_default' address.id %}" class="text-decoration-none">选择</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

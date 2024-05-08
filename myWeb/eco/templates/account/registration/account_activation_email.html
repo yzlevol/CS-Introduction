@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+    <span>Hi {{ user.name }},</span><br>
+    <span>Hello,新TJUer! 欢迎来到 Tongji 校园助手！</span><br>
+    <span>在这里你可以作为REQer发布你的需求，也可以做ODer获得悬赏金!</span><br>
+    <span>您已成功创建账号。请点击下面的链接来激活您的账号。</span><br>
+    <a href="http://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}">激活账号</a>
+</body>
+</html>

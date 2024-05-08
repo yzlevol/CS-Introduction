@@ -1,0 +1,186 @@
+{% extends "../base.html" %}
+{% load static %}
+{% block stylesheet %}{% static 'store/css/store.css' %}{% endblock %}
+{% block title %}
+{% if product %}{{ product.title }}{% else %}商品{% endif %}
+{% endblock %}
+{% block content %}
+
+<style>
+
+    .text-custom {
+        color: #ffffff;
+    }
+    .transparent-bg {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+    .transparent-nav{
+       background-color: rgba(255, 255, 255, 0.1);
+    }
+</style>
+
+<div id="info-msg" class="container">
+  <div class="alert alert-success alert-dismissable fw600 rounded-0 border-0 pb-3" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-info-circle me-2"
+      viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+      <path
+        d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+    </svg>
+    成功添加至你的OD List~
+    <button type="submit" class="btn-close float-end" data-bs-dismiss="alert"></button>
+  </div>
+</div>
+
+<div class="container">
+{% if messages %}
+<div class="alert alert-warning" alert-{{ message.tags }}" role="alert">
+{% for message in messages  %}
+  {{message|safe}} - <a href="{% url "account:wishlist" %}" class="alert-link">点击查看</a>.
+{% endfor %}
+</div>
+{% endif %}
+  <div class="row g-3 transparent-bg">
+    <div class="col-md-5 ps-3 col-lg-5 order-md-last p-0 order-1 ">
+      <div class="d-grid gap-2 ">
+        <div class="d-flex d-flex-inline justify-content-between ">
+          <div><span class="h3">￥ {{ product.regular_price }}</span>
+            <p>{{ product.description|slice:":355" }}...</p>
+            <a role="button" href="{% url "account:view_seller" product.seller_id%}" class="btn btn-light fw100" type="button">查看REQer信息</a>
+          </div>
+          <div>
+          </div>
+        </div>
+        <hr>
+        <br>
+        <br>
+        {% comment %} <a herf="account." {% endcomment %}
+        {% if product.quantity <= 0 %}
+          <button type="button" class="btn btn-danger fw500" disabled>已被抢</button>
+        {% else %}
+          <button type="submit" id="add-button" value="{{product.id}}" class="btn btn-success fw500" >添加到OD List</button>
+        {% endif %}
+        <a href="{% url "account:user_wishlist" product.id  %}" class="btn btn-light fw500" role="button" aria-disabled="true">添加到收藏</a>
+      </div>
+    </div>
+    <div class="col-md-7 col-lg-7 p-0">
+      <div class="card mb-3 border-0">
+        <div class="row g-0">
+          <div class="col-md-12">
+            <div class="card-body p-1">
+              <h1 class="mb-0 h2 pe-4 pb-4">{{ product.title }}</h1>
+              <div class="bg-light">
+
+                {% for image in product.product_image.all %}
+                {% if image.is_feature %}
+                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ image.image.url }}"
+                  alt="{{ image.image.alt_text }}">
+                {% else %}
+                <img class="img-fluid d-block-inline pt-3" width="100px" alt="Responsive image"
+                  src="{{ image.image.url }}" alt="{{ image.image.alt_text }}">
+                {% endif %}
+                {% endfor %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<br>
+<br>
+<br>
+
+<div class="transparent-nav">
+    <h1 class="mb-0 h2 pe-2 pb-4 text-white-50">详情记录:</h1>
+    {% if product.order_product.all %}
+        <ul>
+            {% for order in product.order_product.all %}
+                <li>Order ID: {{ order.id }}, User: {{ order.user }}, Created: {{ order.created|date:"Y-m-d H:i:s" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align:center;">暂无记录。</p>
+    {% endif %}
+</div>
+
+<div class="transparent-nav">
+    <h1 class="mb-0 h2 pe-2 pb-4 text-white-50">全部评论:</h1>
+    {% if product.comments.all %}
+        <ul>
+            {% for comment in product.comments.all %}
+                <li>
+                    <span style="color: green;">用户{{ comment.user_id }}{% if comment.order %} (Order){% endif %}</span>
+                    {{ comment.created|date:"Y/m/d H:i" }} <p>->  {{ comment.body }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align:center;">暂无评论记录。</p>
+    {% endif %}
+</div>
+
+<div class="transparent-nav">
+    <h1 class="mb-0 h2 pe-2 pb-4 text-white-50">ODer评论:</h1>
+
+    <!-- 显示已有评论 -->
+    {% if product.order_product.all %}
+      {% for order in product.order_product.all %}
+        {% if order.comments %}
+          <span style="color: green;">
+            {{ order.comments.created|date:"Y-m-d H:i:s" }}
+          </span>
+          <p><span style="color: green;">{{ order.user }}</span>评论： {{ order.comments.body }}</p>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <p style="text-align:center;">---暂无人评论---</p>
+    {% endif %}
+
+
+
+  <!-- 添加评论表单 -->
+<form name="comment_form" class="comment-form transparent-bg" method="POST" action="{% url 'comment:post_comment_anyone' product_id=product.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <textarea name="body" type="text" class="form-control transparent-nav" placeholder="哈喽，快来发表你的评论吧~~" rows="4" cols="120"></textarea>
+
+    <br>
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-primary custom-btn-primary">发表评论</button>
+    </div>
+</form>
+
+</div>
+
+
+  <script>
+    $(document).on('click', '#add-button', function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_add" %}',
+        // data: {
+        //   productid: $('#add-button').val(),
+        //   productqty: $('#select option:selected').text(), // 数量的判断需完善
+        //   csrfmiddlewaretoken: "{{csrf_token}}",
+        //   action: 'post'
+        // },
+          data: {
+          productid: $('#add-button').val(),
+          productqty: 1,  // 将数量先写死为 1
+          csrfmiddlewaretoken: "{{csrf_token}}",
+          action: 'post'
+        },
+        success: function (json) {
+          document.getElementById("basket-qty").innerHTML = json.qty
+          document.getElementById("info-msg").style.display = 'block'
+        },
+        error: function (xhr, errmsg, err) {}
+      });
+    })
+  </script>
+
+  {% endblock %}
+

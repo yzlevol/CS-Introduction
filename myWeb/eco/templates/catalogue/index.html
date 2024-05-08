@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Tongji 校园助手{% endblock %}
+{% block content %}
+
+
+
+
+
+
+
+<style>
+
+    .text-custom {
+        color: #ffffff;
+    }
+    .transparent-bg {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+    .transparent-nav{
+       background-color: rgba(255, 255, 255, 0.1);
+    }
+</style>
+
+<section class="text-center container">
+  <div class="row mx-auto">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      {% if not user.is_authenticated %}
+      <h1 class="h1 fw-bold text-white-50" style="white-space: nowrap;">欢迎来到 Tongji 校园助手</h1>
+      <p></p>
+      <p id="text1" class="lead text-custom" ></p>
+
+<script>
+    const text1 = "这是TJUer的校园互助平台.在这里，你可以作为REQer发布需求，也可以作为ODer帮助他人^.^";
+    function typeWriter(text, elementId, speed) {
+        let i = 0;
+        const element = document.getElementById(elementId);
+        element.innerHTML = "";
+
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+
+        type();
+    }
+
+    typeWriter(text1, "text1", 100);
+</script>
+      {% if not user.is_authenticated %}
+      <p>
+          <a href="{%url 'account:login'%}" class="btn btn-primary custom-btn-primary my-2">Login in | Sign up</a>
+      </p>
+      {% endif %}
+
+      {% else %}
+       <h1 class="h1 fw-bold text-white-50">Tongji 校园助手</h1>
+      {% endif %}
+    </div>
+    <div class="container py-3">
+      <form>
+        <div class="input-group input-group-md row">
+          <span class="input-group-text col-sm-2 row-gap-sm-4">搜索REQ</span>
+          <input class="form-control col-sm-8" type="text" name="search_text">
+          <button class="btn btn-primary custom-btn-primary col-sm-2" type="submit" action="." method="GET">Search</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid transparent-nav">
+  <div class="container">
+    <div class="row">
+      <div class="album py-5">
+        <div class="pb-3">
+          <h1 class="h3">发现</h1>
+        </div>
+        {% if not products %}
+        <div class="col-12">暂无可用REQ。</div>
+        {% else %}
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 tr">
+          {% for product in products %}
+          <div class="col">
+            <div class="card border-0 shadow shadow-md transparent-bg">
+              {% for image in product.product_image.all %}
+              {% if image.is_feature %}
+              <img class="img-fluid" alt="Responsive image" src="{{ image.image.url }}"
+                alt="{{ image.image.alt_text }}">
+              {% endif %}
+              {% endfor %}
+              <div class="card-body px-2">
+                <p class="card-text">
+                  <a class="text-dark text-decoration-none"
+                    href="{{ product.get_absolute_url }}">{{product.title|slice:":50" }}</a>
+                </p>
+                {% if product.quantity == 0 %}
+                  <p class="card-text text-danger">
+                      已派出
+                  </p>
+                {% endif %}
+                <div class="fw-bold">{{product.regular_price}} 元</div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+  {% endblock %}

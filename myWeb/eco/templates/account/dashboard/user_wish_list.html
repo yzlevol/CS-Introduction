@@ -1,0 +1,48 @@
+{% extends "../sub_base.html" %}
+{% block title %}用户收藏夹{% endblock %}
+
+{% block sub_content %}
+<div class="col-12 mx-auto">
+  <h1 class="h3">我的收藏夹</h1>
+  <div>管理您的收藏夹</div>
+  <hr />
+  {% if messages %}
+  <div class="alert alert-warning" alert-{{ message.tags }}" role="alert">
+  {% for message in messages  %}
+    {{message|safe}} - <a href="{% url "account:wishlist" %}" class="alert-link">点击查看</a>.
+  {% endfor %}
+  </div>
+  {% endif %}
+  {% if wishlist %}
+  {% for product in wishlist  %}
+
+  <div class="card mb-3 rounded-0">
+    <div class="row g-0">
+      <div class="col-md-2">
+        {% for image in product.product_image.all  %}
+          {% if image.is_feature %}
+          <img class="img-fluid d-block p-2" width="135px" src="{{ image.image.url }}"
+            alt="{{ image.image.alt_text }}" />
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="col-md-10">
+        <div class="card-body">
+          <h5 class="card-title">{{product.title}}</h5>
+          <p class="card-text">{{product.description}}</p>
+          <p class="card-text"><small class="text-muted">{{product.regular_price}}</small></p>
+          <a type="button" class="btn btn-primary  custom-btn-primary fw500 btn-sm" href="{% url 'account:remove_wishlist' product.id %}">移出收藏夹</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+  {% else %}
+  <p class="card-text">您还没有收藏哟</p>
+  {% endif %}
+
+
+
+</div>
+{% endblock %}

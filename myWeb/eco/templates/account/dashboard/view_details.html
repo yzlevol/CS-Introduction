@@ -1,0 +1,87 @@
+{% extends "../sub_base.html" %}
+{% block title %}编辑您的地址{% endblock %}
+{% block sub_content %}
+{% load static %}
+
+    <style>
+        body {
+            background-image: url('{% static "image/bg3.jpg" %}');
+            background-size: cover;  /* 或者使用 'contain' 根据需要调整 */
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        .transparent-bg {
+            background-color: rgba(255, 255, 255, 0.4); /* 0-1 */
+        }
+        .transparent-all {
+            background-color: rgba(255, 255, 255, 0); /* 0-1 */
+        }
+        .card1 {
+            border-radius: 10px; /* 调整半径大小根据需要 */
+        }
+    </style>
+
+
+<div class="container-fluid transparent-bg">
+    <div class="container">
+        <div class="row">
+        <div class="album py-5">
+            <div class="pb-3">
+            <h1 class="h3">{{seller.name}}的主页</h1>
+            </div>
+            <div class="pb-3">
+                <div class="d-flex align-items-center">
+<!--                    <div>-->
+<!--                        <h1 class="h3">Hello,TJUer.</h1>-->
+<!--                    </div>-->
+                    <div class="me-3">
+                        <img src="https://www.tongji.edu.cn/images/badge.png" alt="头像" style="width: 150px; height: auto;">
+                    </div>
+
+                </div>
+            </div>
+
+            <label class="small font-weight-bold">{{ seller.resume }}</label>
+            <br>
+
+            <label class="small font-weight-bold">REQer邮箱:{{seller.email}}</label>
+            <br>
+            <label class="small font-weight-bold">REQer手机号:{{seller.mobile}}</label>
+        </p> </p> </p>
+            <div class="pb-4">
+            <h1 class="h4">他的REQ</h1>
+            </div>
+            {% if not products %}
+            <div class="col-12">---这个TJUer暂时还没有发布REQ---</div>
+            {% else %}
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 transparent-all">
+            {% for product in products %}
+            <div class="col">
+                <div class="card1 border-0 shadow shadow-md transparent-bg">
+                {% for image in product.product_image.all %}
+                {% if image.is_feature %}
+                <img class="img-fluid" alt="Responsive image" src="{{ image.image.url }}"
+                    alt="{{ image.image.alt_text }}">
+                {% endif %}
+                {% endfor %}
+                <div class="card-body px-2">
+                    <p class="card-text">
+                    <a class="text-dark text-decoration-none"
+                        href="{{ product.get_absolute_url }}">{{product.title|slice:":50" }}</a>
+                    </p>
+                    {% if product.quantity == 0 %}
+                    <p class="card-text text-danger">
+                        已派出
+                    </p>
+                    {% endif %}
+                    <div class="fw-bold">{{product.regular_price}} 元</div>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        </div>
+    </div>
+{% endblock %}
